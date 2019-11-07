@@ -1,0 +1,5 @@
+name: "Master-Watcher"
+description: "Checks master status change"
+runs:
+  using: "node12"
+  main: "index.js"
