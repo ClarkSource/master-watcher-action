@@ -1,0 +1,18 @@
+name: Master status
+
+on:
+  check_suite:
+    types: [completed]
+    branches:
+      - master
+
+jobs:
+  status-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: effect305/master-watcher-action@v1
+        with:
+          slack-token: ${{ secrets.SLACK_TOKEN }}
+          slack-channel: CHANNEL_NAME
+          track-success: false
