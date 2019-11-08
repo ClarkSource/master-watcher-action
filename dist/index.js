@@ -1365,7 +1365,7 @@ async function run() {
   const statusWord = statusGreen ? "succeeded" : "failed";
 
   web.chat.postMessage({
-    icon: statusGreen ? greenIcon : redIcon,
+    icon_emoji: statusGreen ? greenIcon : redIcon,
     channel: core.getInput("slack-channel"),
     text: `*Build ${statusWord} on <${repoUrl}/commits/master|master branch>.*\n<${commitUrl}|${commitMessage}>\nLinks to Github TBA`
   });
