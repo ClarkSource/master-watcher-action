@@ -15,7 +15,7 @@ async function run() {
   const commitUrl = `${repoUrl}/${commit.id}`;
 
   const trackSuccess = core.getInput("track-success") || false;
-  if (status === "pending") return;
+  if (status === "neutral") return;
 
   const statusGreen = status === "success";
   if (!trackSuccess && statusGreen) return;
