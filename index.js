@@ -1,6 +1,7 @@
 const github = require("@actions/github");
 const core = require("@actions/core");
 const { WebClient } = require("@slack/web-api");
+const { shortenString } = require("./utils");
 
 const web = new WebClient(core.getInput("slack-token"));
 const context = github.context;
@@ -10,7 +11,7 @@ async function run() {
 
   const status = payload.check_suite.conclusion;
   const commit = payload.check_suite.head_commit;
-  const commitMessage = commit.message;
+  const commitHeader = shortenString(commit.message);
   const repoUrl = payload.repository.html_url;
   const commitUrl = `${repoUrl}/commit/${commit.id}`;
 
@@ -28,7 +29,7 @@ async function run() {
     as_user: false,
     icon_emoji: statusGreen ? greenIcon : redIcon,
     channel: core.getInput("slack-channel"),
-    text: `*Build ${statusWord} on <${repoUrl}/commits/master|master branch>.*\n<${commitUrl}|${commitMessage}>\nLinks to Github TBA`
+    text: `*Build ${statusWord} on <${repoUrl}/commits/master|master branch>.*\n<${commitUrl}|${commitHeader}>\nLinks to Github TBA`
   });
 }
 try {
