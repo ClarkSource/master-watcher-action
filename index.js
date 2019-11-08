@@ -11,7 +11,7 @@ async function run() {
 
   const status = payload.check_suite.conclusion;
   const commit = payload.check_suite.head_commit;
-  const commitHeader = shortenString(commit.message);
+  const commitHeader = shortenString(commit.message, 50);
   const repoUrl = payload.repository.html_url;
   const commitUrl = `${repoUrl}/commit/${commit.id}`;
 
