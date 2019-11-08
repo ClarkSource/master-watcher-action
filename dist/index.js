@@ -1341,6 +1341,7 @@ function serial(list, iterator, callback)
 const github = __webpack_require__(469);
 const core = __webpack_require__(470);
 const { WebClient } = __webpack_require__(114);
+const { shortenString } = __webpack_require__(278);
 
 const web = new WebClient(core.getInput("slack-token"));
 const context = github.context;
@@ -1350,7 +1351,7 @@ async function run() {
 
   const status = payload.check_suite.conclusion;
   const commit = payload.check_suite.head_commit;
-  const commitMessage = commit.message;
+  const commitHeader = shortenString(commit.message);
   const repoUrl = payload.repository.html_url;
   const commitUrl = `${repoUrl}/commit/${commit.id}`;
 
@@ -1368,7 +1369,7 @@ async function run() {
     as_user: false,
     icon_emoji: statusGreen ? greenIcon : redIcon,
     channel: core.getInput("slack-channel"),
-    text: `*Build ${statusWord} on <${repoUrl}/commits/master|master branch>.*\n<${commitUrl}|${commitMessage}>\nLinks to Github TBA`
+    text: `*<${commitUrl}|${commitHeader}>*\n*Build ${statusWord} on <${repoUrl}/commits/master|master branch>.*\nLinks to Github TBA`
   });
 }
 try {
@@ -3825,6 +3826,24 @@ function applyAcceptHeader (res, headers) {
 
   return headers
 }
+
+
+/***/ }),
+
+/***/ 278:
+/***/ (function(__unusedmodule, exports) {
+
+exports.shortenString = (string, max) => {
+  if (string && string.length > max) {
+    return `${string
+      .slice(0, max)
+      .split(" ")
+      .slice(0, -1)
+      .join(" ")}...`;
+  }
+
+  return string;
+};
 
 
 /***/ }),
