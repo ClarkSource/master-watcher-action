@@ -12,7 +12,7 @@ async function run() {
   const commit = payload.check_suite.head_commit;
   const commitMessage = commit.message;
   const repoUrl = payload.repository.html_url;
-  const commitUrl = `${repoUrl}/${commit.id}`;
+  const commitUrl = `${repoUrl}/${commit.html_url}`;
 
   const trackSuccess = core.getInput("track-success") || false;
   if (status === "neutral") return;
