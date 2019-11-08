@@ -29,7 +29,7 @@ async function run() {
     as_user: false,
     icon_emoji: statusGreen ? greenIcon : redIcon,
     channel: core.getInput("slack-channel"),
-    text: `*Build ${statusWord} on <${repoUrl}/commits/master|master branch>.*\n<${commitUrl}|${commitHeader}>\nLinks to Github TBA`
+    text: `*<${commitUrl}|${commitHeader}>*\n*Build ${statusWord} on <${repoUrl}/commits/master|master branch>.*\nLinks to Github TBA`
   });
 }
 try {
