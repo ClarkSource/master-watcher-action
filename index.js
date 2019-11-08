@@ -7,16 +7,27 @@ const context = github.context;
 
 async function run() {
   const { payload } = context;
+
   const status = payload.check_suite.conclusion;
-  const commitMessage = payload.check_suite.head_commit.message;
+  const commit = payload.check_suite.head_commit;
+  const commitMessage = commit.message;
+  const repoUrl = payload.repository.html_url;
+  const commitUrl = `${repoUrl}/${commit.id}`;
 
   const trackSuccess = core.getInput("track-success") || false;
   if (status === "pending") return;
-  if (!trackSuccess && status === "success") return;
+
+  const statusGreen = status === "success";
+  if (!trackSuccess && statusGreen) return;
+
+  const greenIcon = core.getInput("green-icon") || ":green_heart:";
+  const redIcon = core.getInput("red-icon") || ":red_circle:";
+  const statusWord = statusGreen ? "succeeded" : "failed";
 
   web.chat.postMessage({
+    icon: statusGreen ? greenIcon : redIcon,
     channel: core.getInput("slack-channel"),
-    text: `Build resulted with ${status} on master: ${commitMessage}`
+    text: `*Build ${statusWord} on <${repoUrl}/commits/master|master branch>.*\n<${commitUrl}|${commitMessage}>\nLinks to Github TBA`
   });
 }
 try {
