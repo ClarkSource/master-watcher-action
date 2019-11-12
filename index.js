@@ -52,7 +52,7 @@ async function circleciAttachments(check_suite_id) {
       return row.trim().split(" - ");
     })
     .filter(check_run => {
-      check_run[1] !== "Success" && check_run[1] !== "Pending";
+      return check_run[1] !== "Success" && check_run[1] !== "Pending";
     })
     .map(check_run => {
       const match = circleci_regex.run(check_run[0]);
