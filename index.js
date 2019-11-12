@@ -10,10 +10,6 @@ const context = github.context;
 const CIRCLECI_SLUG = "circleci-checks";
 
 async function run() {
-  console.log("-------------------------------------");
-  console.log(context);
-  console.log("-------------------------------------");
-
   const { payload } = context;
   const {
     conclusion: status,
