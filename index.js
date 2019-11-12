@@ -13,13 +13,11 @@ async function run() {
   console.log("-------------------------------------");
 
   const { payload, repo } = context;
-
-  const { check_suite: checkSuite } = payload;
   const {
     conclusion: status,
     head_commit: commit,
-    id: checkSuiteId
-  } = checkSuite;
+    id: check_suite_id
+  } = payload.check_suite;
   const commitHeader = shortenString(commit.message, 50);
   const repoUrl = payload.repository.html_url;
   const commitUrl = `${repoUrl}/commit/${commit.id}`;
@@ -34,12 +32,12 @@ async function run() {
   const redIcon = core.getInput("red-icon") || ":red_circle:";
   const statusWord = statusGreen ? "succeeded" : "failed";
 
-  const { data: checkRuns } = await octokit.checks.listForSuite({
+  const { data: check_runs } = await octokit.checks.listForSuite({
     ...repo,
-    checkSuiteId
+    check_suite_id
   });
 
-  console.log(checkRuns);
+  console.log(check_runs);
 
   web.chat.postMessage({
     as_user: false,
