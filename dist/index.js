@@ -1344,13 +1344,22 @@ const { WebClient } = __webpack_require__(114);
 const { shortenString } = __webpack_require__(278);
 
 const web = new WebClient(core.getInput("slack-token"));
+const octokit = new github.GitHub(core.getInput("repo-token"));
 const context = github.context;
 
 async function run() {
-  const { payload } = context;
+  console.log("-------------------------------------");
+  console.log(context);
+  console.log("-------------------------------------");
 
-  const status = payload.check_suite.conclusion;
-  const commit = payload.check_suite.head_commit;
+  const { payload, repo } = context;
+
+  const { check_suite: checkSuite } = payload.check_suite;
+  const {
+    conclusion: status,
+    head_commit: commit,
+    id: checkSuiteId
+  } = checkSuite;
   const commitHeader = shortenString(commit.message, 50);
   const repoUrl = payload.repository.html_url;
   const commitUrl = `${repoUrl}/commit/${commit.id}`;
@@ -1364,6 +1373,13 @@ async function run() {
   const greenIcon = core.getInput("green-icon") || ":green_heart:";
   const redIcon = core.getInput("red-icon") || ":red_circle:";
   const statusWord = statusGreen ? "succeeded" : "failed";
+
+  const { data: checkRuns } = await octokit.checks.listForSuite({
+    ...repo,
+    checkSuiteId
+  });
+
+  console.log(checkRuns);
 
   web.chat.postMessage({
     as_user: false,
