@@ -1410,7 +1410,7 @@ async function circleciAttachments(check_suite_id) {
     });
 }
 
-function slackMessage({ icon_emoji, text, attachments } = {}) {
+function slackMessage({ icon_emoji, text, attachments }) {
   web.chat.postMessage({
     as_user: false,
     channel: core.getInput("slack-channel"),
