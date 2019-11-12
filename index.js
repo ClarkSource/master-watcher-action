@@ -4,9 +4,14 @@ const { WebClient } = require("@slack/web-api");
 const { shortenString } = require("./utils");
 
 const web = new WebClient(core.getInput("slack-token"));
+const octokit = new github.GitHub(core.getInput("repo-token"));
 const context = github.context;
 
 async function run() {
+  console.log("-------------------------------------");
+  console.log(context);
+  console.log("-------------------------------------");
+
   const { payload } = context;
 
   const status = payload.check_suite.conclusion;
