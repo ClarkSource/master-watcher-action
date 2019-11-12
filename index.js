@@ -18,19 +18,12 @@ async function run() {
     head_commit: commit,
     id: check_suite_id
   } = payload.check_suite;
-  const commitHeader = shortenString(commit.message, 50);
-  const repoUrl = payload.repository.html_url;
-  const commitUrl = `${repoUrl}/commit/${commit.id}`;
 
-  const trackSuccess = core.getInput("track-success") || false;
-  if (status === "neutral") return;
+  if (status === "neutral" || status === "success") return;
 
-  const statusGreen = status === "success";
-  if (!trackSuccess && statusGreen) return;
-
-  const greenIcon = core.getInput("green-icon") || ":green_heart:";
-  const redIcon = core.getInput("red-icon") || ":red_circle:";
-  const statusWord = statusGreen ? "succeeded" : "failed";
+  const commit_header = shortenString(commit.message, 50);
+  const repo_url = payload.repository.html_url;
+  const commit_url = `${repo_url}/commit/${commit.id}`;
 
   const { data: check_runs } = await octokit.checks.listForSuite({
     ...repo,
@@ -39,13 +32,21 @@ async function run() {
 
   console.log(check_runs);
 
+  slackMessage(
+    ":red_circle:",
+    `*<${commit_url}|${commit_header}>*\n*Build failed on <${repo_url}/commits/master|master branch>.*\nLinks to Github TBA`
+  );
+}
+
+function slackMessage(icon_emoji, text) {
   web.chat.postMessage({
     as_user: false,
-    icon_emoji: statusGreen ? greenIcon : redIcon,
     channel: core.getInput("slack-channel"),
-    text: `*<${commitUrl}|${commitHeader}>*\n*Build ${statusWord} on <${repoUrl}/commits/master|master branch>.*\nLinks to Github TBA`
+    icon_emoji,
+    text
   });
 }
+
 try {
   run();
 } catch (e) {
