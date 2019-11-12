@@ -1354,7 +1354,7 @@ async function run() {
 
   const { payload, repo } = context;
 
-  const { check_suite: checkSuite } = payload.check_suite;
+  const { check_suite: checkSuite } = payload;
   const {
     conclusion: status,
     head_commit: commit,
