@@ -92,7 +92,7 @@ async function statusChanged() {
     avatar_url: avatarUrl
   } = payload;
 
-  if (state !== "failure" || state !== "error") return;
+  if (state !== "failure" && state !== "error") return;
 
   const commitHeader = shortenString(commit.message, 50);
   const repoUrl = payload.repository.html_url;
