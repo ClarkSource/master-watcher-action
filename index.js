@@ -99,6 +99,7 @@ async function statusChanged() {
   const commitUrl = `${repoUrl}/commit/${commit.sha}`;
   const masterUrl = `${repoUrl}/commits/master`;
 
+  console.log("Ready");
   web.chat.postMessage({
     as_user: false,
     channel: core.getInput("slack-channel"),
@@ -114,6 +115,7 @@ async function statusChanged() {
       }
     ]
   });
+  console.log("Done?");
 }
 
 try {
