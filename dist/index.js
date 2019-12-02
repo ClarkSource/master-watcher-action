@@ -1338,87 +1338,24 @@ function serial(list, iterator, callback)
 /***/ 104:
 /***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
 
-const github = __webpack_require__(469);
-const core = __webpack_require__(470);
-const { WebClient } = __webpack_require__(114);
-const { shortenString } = __webpack_require__(278);
+try {
+  const github = __webpack_require__(469);
+  const githubContext = github.context;
 
-const web = new WebClient(core.getInput("slack-token"));
-// const octokit = new github.GitHub(core.getInput("repo-token"));
-const githubContext = github.context;
+  const { state } = githubContext.payload;
+  if (state !== "failure" && state !== "error") {
+    console.log(`State is ${state}, no notification required.`);
+    return;
+  }
 
-// const CIRCLECI_SLUG = "circleci-checks";
+  const core = __webpack_require__(470);
+  const slackToken = core.getInput("slack-token");
+  const slackChannel = core.getInput("slack-channel");
 
-// async function run() {
-//   const { payload } = githubContext;
-//   const {
-//     conclusion: status,
-//     head_commit: commit,
-//     id: check_suite_id
-//   } = payload.check_suite;
+  const { WebClient } = __webpack_require__(114);
+  const { shortenString } = __webpack_require__(278);
 
-//   if (status === "neutral" || status === "success") return;
-
-//   const commit_header = shortenString(commit.message, 50);
-//   const repo_url = payload.repository.html_url;
-//   const commit_url = `${repo_url}/commit/${commit.id}`;
-
-//   slackMessage({
-//     icon_emoji: ":red_circle:",
-//     text: `*<${commit_url}|${commit_header}>*\n*Build failed on <${repo_url}/commits/master|master branch>.*`,
-//     attachments: await circleciAttachments(check_suite_id)
-//   });
-// }
-
-// async function circleciAttachments(check_suite_id) {
-//   const { data: check_runs } = await octokit.checks.listForSuite({
-//     ...githubContext.repo,
-//     check_suite_id
-//   });
-
-//   const circleci_check_run = check_runs.find(check_run => {
-//     return (
-//       check_run.app.slug === CIRCLECI_SLUG &&
-//       check_run.conclusion !== "neutral" &&
-//       check_run.conclusion !== "success"
-//     );
-//   });
-
-//   const circleci_regex = /\[(.+)\]\((.+)\)/;
-//   return circleci_check_run.output.summary
-//     .split("* ")
-//     .slice(1)
-//     .map(row => {
-//       return row.trim().split(" - ");
-//     })
-//     .filter(check_run => {
-//       return check_run[1] !== "Success" && check_run[1] !== "Pending";
-//     })
-//     .map(check_run => {
-//       const match = circleci_regex.run(check_run[0]);
-
-//       return {
-//         fallback: `<${match[2]}|${match[1]}>`,
-//         color: "#d30515",
-//         title: match[1],
-//         title_link: match[2]
-//       };
-//     });
-// }
-
-// function slackMessage({ icon_emoji, text, attachments }) {
-//   web.chat.postMessage({
-//     as_user: false,
-//     channel: core.getInput("slack-channel"),
-//     icon_emoji,
-//     text,
-//     attachments
-//   });
-// }
-
-async function statusChanged() {
   const {
-    state,
     commit,
     repository,
     description,
@@ -1427,16 +1364,15 @@ async function statusChanged() {
     avatar_url: avatarUrl
   } = githubContext.payload;
 
-  if (state !== "failure" && state !== "error") return;
-
   const { html_url: commitUrl, commit: commitData } = commit;
   const { html_url: repositoryUrl } = repository;
   const commitHeader = shortenString(commitData.message, 50);
   const masterUrl = `${repositoryUrl}/commits/master`;
 
-  web.chat.postMessage({
+  const slackbot = new WebClient(slackToken);
+  slackbot.chat.postMessage({
     as_user: false,
-    channel: core.getInput("slack-channel"),
+    channel: slackChannel,
     text: `${commitHeader} (<${commitUrl}|commit> | <${masterUrl}|master>)`,
     attachments: [
       {
@@ -1449,10 +1385,6 @@ async function statusChanged() {
       }
     ]
   });
-}
-
-try {
-  statusChanged();
 } catch (e) {
   console.log(e);
 }
