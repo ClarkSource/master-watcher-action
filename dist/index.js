@@ -1435,9 +1435,9 @@ async function statusChanged() {
 
   if (state !== "failure" && state !== "error") return;
 
-  const { html_url: commitUrl } = commit;
+  const { html_url: commitUrl, commit: commitData } = commit;
   const { html_url: repositoryUrl } = repository;
-  const commitHeader = shortenString(commit.message, 50);
+  const commitHeader = shortenString(commitData.message, 50);
   const masterUrl = `${repositoryUrl}/commits/master`;
 
   console.log("Ready");
