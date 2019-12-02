@@ -5,12 +5,12 @@ const { shortenString } = require("./utils");
 
 const web = new WebClient(core.getInput("slack-token"));
 // const octokit = new github.GitHub(core.getInput("repo-token"));
-const context = github.context;
+const githubContext = github.context;
 
 // const CIRCLECI_SLUG = "circleci-checks";
 
 // async function run() {
-//   const { payload } = context;
+//   const { payload } = githubContext;
 //   const {
 //     conclusion: status,
 //     head_commit: commit,
@@ -32,7 +32,7 @@ const context = github.context;
 
 // async function circleciAttachments(check_suite_id) {
 //   const { data: check_runs } = await octokit.checks.listForSuite({
-//     ...context.repo,
+//     ...githubContext.repo,
 //     check_suite_id
 //   });
 
@@ -78,26 +78,27 @@ const context = github.context;
 
 async function statusChanged() {
   console.log("-------------------------------------");
-  console.log(context);
+  console.log(githubContext);
   console.log("-------------------------------------");
 
-  const { payload } = context;
+  const { payload } = githubContext;
 
   const {
     state,
     commit,
+    repository,
     description,
-    context: buildContext,
+    context,
     target_url: targetUrl,
     avatar_url: avatarUrl
   } = payload;
 
   if (state !== "failure" && state !== "error") return;
 
+  const { html_url: commitUrl } = commit;
+  const { html_url: repositoryUrl } = repository;
   const commitHeader = shortenString(commit.message, 50);
-  const repoUrl = payload.repository.html_url;
-  const commitUrl = `${repoUrl}/commit/${commit.sha}`;
-  const masterUrl = `${repoUrl}/commits/master`;
+  const masterUrl = `${repositoryUrl}/commits/master`;
 
   console.log("Ready");
   web.chat.postMessage({
@@ -106,9 +107,9 @@ async function statusChanged() {
     text: `${commitHeader} (<${commitUrl}|commit> | <${masterUrl}|master>)`,
     attachments: [
       {
-        fallback: `<${targetUrl}|${buildContext}> - ${description}`,
+        fallback: `<${targetUrl}|${context}> - ${description}`,
         color: "#d30515",
-        title: buildContext,
+        title: context,
         title_link: targetUrl,
         text: description,
         thumb_url: avatarUrl
