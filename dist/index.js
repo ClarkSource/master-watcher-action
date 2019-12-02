@@ -1423,24 +1423,34 @@ async function statusChanged() {
 
   const { payload } = context;
 
-  const { state, commit } = payload;
+  const {
+    state,
+    commit,
+    description,
+    context: buildContext,
+    target_url: targetUrl,
+    avatar_url: avatarUrl
+  } = payload;
+
   if (state !== "failure" || state !== "error") return;
 
   const commitHeader = shortenString(commit.message, 50);
   const repoUrl = payload.repository.html_url;
   const commitUrl = `${repoUrl}/commit/${commit.sha}`;
+  const masterUrl = `${repoUrl}/commits/master`;
 
   web.chat.postMessage({
     as_user: false,
-    icon_emoji: ":red_circle:",
     channel: core.getInput("slack-channel"),
-    text: `Build failed on <${repoUrl}/commits/master|master branch>.`,
+    text: `${commitHeader} (<${commitUrl}|commit> | <${masterUrl}|master>)`,
     attachments: [
       {
-        fallback: `<${commitUrl}|${commitHeader}>`,
+        fallback: `<${targetUrl}|${buildContext}> - ${description}`,
         color: "#d30515",
-        title: commitHeader,
-        title_link: commitUrl
+        title: buildContext,
+        title_link: targetUrl,
+        text: description,
+        thumb_url: avatarUrl
       }
     ]
   });
