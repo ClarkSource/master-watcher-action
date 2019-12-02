@@ -1417,12 +1417,6 @@ const githubContext = github.context;
 // }
 
 async function statusChanged() {
-  console.log("-------------------------------------");
-  console.log(githubContext);
-  console.log("-------------------------------------");
-
-  const { payload } = githubContext;
-
   const {
     state,
     commit,
@@ -1431,7 +1425,7 @@ async function statusChanged() {
     context,
     target_url: targetUrl,
     avatar_url: avatarUrl
-  } = payload;
+  } = githubContext.payload;
 
   if (state !== "failure" && state !== "error") return;
 
@@ -1440,7 +1434,6 @@ async function statusChanged() {
   const commitHeader = shortenString(commitData.message, 50);
   const masterUrl = `${repositoryUrl}/commits/master`;
 
-  console.log("Ready");
   web.chat.postMessage({
     as_user: false,
     channel: core.getInput("slack-channel"),
@@ -1456,7 +1449,6 @@ async function statusChanged() {
       }
     ]
   });
-  console.log("Done?");
 }
 
 try {
