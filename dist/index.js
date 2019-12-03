@@ -1353,7 +1353,7 @@ try {
   const slackChannel = core.getInput("slack-channel");
 
   const { WebClient } = __webpack_require__(114);
-  const { shortenString } = __webpack_require__(278);
+  const { shortenString, firstLineString, reducedSha } = __webpack_require__(278);
 
   const {
     commit,
@@ -1366,14 +1366,14 @@ try {
 
   const { html_url: commitUrl, commit: commitData } = commit;
   const { html_url: repositoryUrl } = repository;
-  const commitHeader = shortenString(commitData.message, 50);
+  const commitHeader = shortenString(firstLineString(commitData.message), 50);
   const masterUrl = `${repositoryUrl}/commits/master`;
 
   const slackbot = new WebClient(slackToken);
   slackbot.chat.postMessage({
     as_user: false,
     channel: slackChannel,
-    text: `${commitHeader} (<${commitUrl}|commit> | <${masterUrl}|master>)`,
+    text: `${commitHeader} [<${commitUrl}|reducedSha(commit.sha)> on <${masterUrl}|master>]`,
     attachments: [
       {
         fallback: `<${targetUrl}|${context}> - ${description}`,
@@ -3854,6 +3854,14 @@ exports.shortenString = (string, max) => {
   }
 
   return string;
+};
+
+exports.firstLineString = string => {
+  return string ? string.split("\n")[0] : string;
+};
+
+exports.reducedSha = sha => {
+  return sha.slice(0, 7);
 };
 
 
