@@ -13,7 +13,7 @@ try {
   const slackChannel = core.getInput("slack-channel");
 
   const { WebClient } = require("@slack/web-api");
-  const { shortenString } = require("./utils");
+  const { shortenString, firstLineString } = require("./utils");
 
   const {
     commit,
@@ -26,7 +26,7 @@ try {
 
   const { html_url: commitUrl, commit: commitData } = commit;
   const { html_url: repositoryUrl } = repository;
-  const commitHeader = shortenString(commitData.message, 50);
+  const commitHeader = shortenString(firstLineString(commitData.message), 50);
   const masterUrl = `${repositoryUrl}/commits/master`;
 
   const slackbot = new WebClient(slackToken);

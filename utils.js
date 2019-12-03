@@ -9,3 +9,7 @@ exports.shortenString = (string, max) => {
 
   return string;
 };
+
+exports.firstLineString = string => {
+  return string ? string.split("\n")[0] : string;
+};
