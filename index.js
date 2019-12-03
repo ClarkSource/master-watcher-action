@@ -27,13 +27,14 @@ try {
   const { html_url: commitUrl, commit: commitData } = commit;
   const { html_url: repositoryUrl } = repository;
   const commitHeader = shortenString(firstLineString(commitData.message), 50);
+  const reducedCommitSha = reducedSha(commit.sha);
   const masterUrl = `${repositoryUrl}/commits/master`;
 
   const slackbot = new WebClient(slackToken);
   slackbot.chat.postMessage({
     as_user: false,
     channel: slackChannel,
-    text: `${commitHeader} [<${commitUrl}|reducedSha(commit.sha)> on <${masterUrl}|master>]`,
+    text: `${commitHeader} [<${commitUrl}|${reducedCommitSha}> on <${masterUrl}|master>]`,
     attachments: [
       {
         fallback: `<${targetUrl}|${context}> - ${description}`,
