@@ -13,3 +13,7 @@ exports.shortenString = (string, max) => {
 exports.firstLineString = string => {
   return string ? string.split("\n")[0] : string;
 };
+
+exports.reducedSha = sha => {
+  return sha.slice(0, 7);
+};

@@ -13,7 +13,7 @@ try {
   const slackChannel = core.getInput("slack-channel");
 
   const { WebClient } = require("@slack/web-api");
-  const { shortenString, firstLineString } = require("./utils");
+  const { shortenString, firstLineString, reducedSha } = require("./utils");
 
   const {
     commit,
@@ -33,7 +33,7 @@ try {
   slackbot.chat.postMessage({
     as_user: false,
     channel: slackChannel,
-    text: `${commitHeader} (<${commitUrl}|commit> | <${masterUrl}|master>)`,
+    text: `${commitHeader} [<${commitUrl}|reducedSha(commit.sha)> on <${masterUrl}|master>]`,
     attachments: [
       {
         fallback: `<${targetUrl}|${context}> - ${description}`,
