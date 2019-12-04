@@ -1,8 +1,7 @@
-name: Master status
+name: Master status notification
 
 on:
-  check_suite:
-    types: [completed]
+  status:
     branches:
       - master
 
@@ -15,4 +14,3 @@ jobs:
         with:
           slack-token: ${{ secrets.SLACK_TOKEN }}
           slack-channel: CHANNEL_NAME
-          track-success: false
