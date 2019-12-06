@@ -1348,6 +1348,12 @@ try {
     return;
   }
 
+  const { branches } = githubContext.payload;
+  if (!branches.some(branch => branch.name === "master")) {
+    console.log(`Not master branch status update, no notification required.`);
+    return;
+  }
+
   const core = __webpack_require__(470);
   const slackToken = core.getInput("slack-token");
   const slackChannel = core.getInput("slack-channel");
