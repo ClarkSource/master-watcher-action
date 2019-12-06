@@ -1,9 +1,7 @@
 name: Master status notification
 
 on:
-  status:
-    branches:
-      - master
+  status
 
 jobs:
   status-check:
@@ -11,6 +9,7 @@ jobs:
 
     steps:
       - uses: effect305/master-watcher-action@v1
+        if: (github.event.state == 'failure' || github.event.state == 'error') && contains(github.event.branches.*.name, 'master')
         with:
           slack-token: ${{ secrets.SLACK_TOKEN }}
           slack-channel: CHANNEL_NAME
