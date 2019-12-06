@@ -40,7 +40,7 @@ try {
   slackbot.chat.postMessage({
     as_user: false,
     channel: slackChannel,
-    text: `${commitHeader} [<${commitUrl}|${reducedCommitSha}> on <${masterUrl}|master>]`,
+    text: `<!channel>\n${commitHeader} [<${commitUrl}|${reducedCommitSha}> on <${masterUrl}|master>]`,
     attachments: [
       {
         fallback: `<${targetUrl}|${context}> - ${description}`,
